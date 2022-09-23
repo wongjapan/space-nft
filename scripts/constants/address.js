@@ -1,0 +1,5 @@
+const FEE_TO_SETTER = "0x33d3fCbEe14FE85627F5Ca3A5F80fCaD30205108";
+
+module.exports = {
+  FEE_TO_SETTER,
+};
