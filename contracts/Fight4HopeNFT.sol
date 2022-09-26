@@ -8,16 +8,29 @@ import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "hardhat/console.sol";
 
-contract SpaceShipNFT is ERC721, ERC721Enumerable, ERC721Burnable, AccessControl, ERC1155Holder {
+contract Fight4HopeNFT is ERC721, ERC721Enumerable, ERC721Burnable, AccessControl, ERC1155Holder {
   using Counters for Counters.Counter;
 
-  IERC1155 gameItemContract;
+  IERC1155 public gameItemContract;
+  IERC1155 public speedBoosterContract;
+  IERC1155 public weightContract;
+  IERC1155 public turningAngleContract;
+  IERC1155 public bodyTypeContract;
+  IERC1155 public specialTypeContract;
+  IERC1155 public missileSpeedContract;
+  IERC1155 public laserTypeContract;
 
-  mapping(uint256 => uint256) _hats;
-  mapping(uint256 => uint256) _shoes;
-  mapping(uint256 => uint256) _glasses;
+  mapping(uint256 => uint256) private _speedBoosters;
+  mapping(uint256 => uint256) private _weight;
+  mapping(uint256 => uint256) private _turningAngle;
+  mapping(uint256 => uint256) private _bodyType;
+  mapping(uint256 => uint256) private _specialType;
+  mapping(uint256 => uint256) private _missileSpeed;
+  mapping(uint256 => uint256) private _laserType;
+  mapping(uint256 => uint256) private _hats;
+  mapping(uint256 => uint256) private _shoes;
+  mapping(uint256 => uint256) private _glasses;
 
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
   Counters.Counter private _tokenIdCounter;
@@ -35,14 +48,15 @@ contract SpaceShipNFT is ERC721, ERC721Enumerable, ERC721Burnable, AccessControl
 
   event FinishedRent(uint256 indexed tokenId, address indexed lord, address indexed renter, uint256 expiresAt);
 
-  constructor(address gameItemContractAddress) ERC721("GameCharacter", "CHARACTER") {
+  constructor(address gameItemContractAddress) ERC721("Fight4Hope", "F4H") {
     _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
     _grantRole(MINTER_ROLE, msg.sender);
     gameItemContract = IERC1155(gameItemContractAddress);
   }
 
-  function safeMint(address to) public /*onlyRole(MINTER_ROLE)*/
-  {
+  function safeMint(
+    address to /*onlyRole(MINTER_ROLE)*/
+  ) public {
     uint256 tokenId = _tokenIdCounter.current();
     _tokenIdCounter.increment();
     _safeMint(to, tokenId);

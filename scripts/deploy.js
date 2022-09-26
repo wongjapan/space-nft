@@ -1,26 +1,22 @@
 const hre = require("hardhat");
 const {ethers} = require("hardhat");
-const {FEE_TO_SETTER} = require("./constants/address");
 
 async function main() {
-  const ArborSwapFactory = await ethers.getContractFactory("ArborSwapFactory");
-  const arborSwapFactory = await ArborSwapFactory.deploy(FEE_TO_SETTER);
+  // We get the contract to deploy
+  const GameItem = await hre.ethers.getContractFactory("GameItem");
+  const gameItem = await GameItem.deploy();
+  const r1 = await gameItem.deployed();
+  console.log(r1.deployTransaction.hash);
 
-  await arborSwapFactory.deployed();
-
-  console.log("ArborSwapFactory deployed to:", arborSwapFactory.address);
-
-  const pairCodeHash = await arborSwapFactory.pairCodeHash();
-  console.log("pairCodeHash:", pairCodeHash);
+  console.log("GameItem deployed to:", gameItem.address);
 
   try {
     await hre.run("verify", {
-      address: arborSwapFactory.address,
-      constructorArgsParams: [FEE_TO_SETTER],
+      address: gameItem.address,
     });
   } catch (error) {
     console.error(error);
-    console.log(`Smart contract at address ${arborSwapFactory.address} is already verified`);
+    console.log(`Smart contract at address ${gameItem.address} is already verified`);
   }
 }
 

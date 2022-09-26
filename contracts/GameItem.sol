@@ -7,48 +7,59 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 
 contract GameItem is ERC1155, AccessControl, ERC1155Burnable, ERC1155Supply {
-    bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
-    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+  bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
+  bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
-    constructor() ERC1155("") {
-        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _grantRole(URI_SETTER_ROLE, msg.sender);
-        _grantRole(MINTER_ROLE, msg.sender);
-    }
+  uint256 public constant SPEED_BOOSTERS = 0;
+  uint256 public constant WEIGHT = 1;
+  uint256 public constant TURNING_ANGLE = 2;
+  uint256 public constant BODY_TYPE = 3;
+  uint256 public constant SPECIAL_TYPE = 4;
+  uint256 public constant MISSILE_TYPE = 5;
+  uint256 public constant LASER_TYPE = 6;
 
-    function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
-        _setURI(newuri);
-    }
+  constructor() ERC1155("") {
+    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    _grantRole(URI_SETTER_ROLE, msg.sender);
+    _grantRole(MINTER_ROLE, msg.sender);
+  }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
-        public
-        //onlyRole(MINTER_ROLE)
-    {
-        _mint(account, id, amount, data);
-    }
+  function setURI(string memory newuri) public onlyRole(URI_SETTER_ROLE) {
+    _setURI(newuri);
+  }
 
-    function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        public
-        //onlyRole(MINTER_ROLE)
-    {
-        _mintBatch(to, ids, amounts, data);
-    }
+  function mint(
+    address account,
+    uint256 id,
+    uint256 amount,
+    bytes memory data
+  ) public onlyRole(MINTER_ROLE) {
+    _mint(account, id, amount, data);
+  }
 
-    // The following functions are overrides required by Solidity.
+  function mintBatch(
+    address to,
+    uint256[] memory ids,
+    uint256[] memory amounts,
+    bytes memory data
+  ) public onlyRole(MINTER_ROLE) {
+    _mintBatch(to, ids, amounts, data);
+  }
 
-    function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-        internal
-        override(ERC1155, ERC1155Supply)
-    {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
-    }
+  // The following functions are overrides required by Solidity.
 
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC1155, AccessControl)
-        returns (bool)
-    {
-        return super.supportsInterface(interfaceId);
-    }
+  function _beforeTokenTransfer(
+    address operator,
+    address from,
+    address to,
+    uint256[] memory ids,
+    uint256[] memory amounts,
+    bytes memory data
+  ) internal override(ERC1155, ERC1155Supply) {
+    super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+  }
+
+  function supportsInterface(bytes4 interfaceId) public view override(ERC1155, AccessControl) returns (bool) {
+    return super.supportsInterface(interfaceId);
+  }
 }

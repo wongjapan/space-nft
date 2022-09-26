@@ -1,5 +1,5 @@
 {
-  "name": "arborswap-contract",
+  "name": "space-nft-contract",
   "version": "0.1.0",
   "license": "MIT",
   "scripts": {
@@ -32,6 +32,6 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.6.0",
-    "@uniswap/lib": "^4.0.1-alpha"
+    "@openzeppelin/contracts-upgradeable": "^4.8.0-rc.1"
   }
 }
