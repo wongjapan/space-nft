@@ -87,7 +87,7 @@ contract F4HIssuer is AccessControl {
     require(_shipTier >= 0 && _shipTier < shipTier.length, "Ship Tier not found");
     shipsAssets.safeMint(address(msg.sender), _shipId);
     shipsAssets.addShip(_shipId, _shipName, shipType[_shipType], _shipClass, shipTier[_shipTier]);
-    emit mintship(msg.sender, _shipId, _shipName, shipType[_shipType], _shipClass, shipTier[_shipTier]);
+    emit MintShip(msg.sender, _shipId, _shipName, shipType[_shipType], _shipClass, shipTier[_shipTier]);
     usedSignatures[signature] = true;
   }
 
