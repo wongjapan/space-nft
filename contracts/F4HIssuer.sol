@@ -5,7 +5,6 @@ import "./Dependency.sol";
 contract F4HIssuer is AccessControl {
   IF4HAssets public shipsAssets;
   bytes32 public constant CREATOR_ADMIN_SERVER = keccak256("CREATOR_ADMIN_SERVER");
-  string public stringNull = "";
 
   constructor(address minter, address _shipsAssets) {
     _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
