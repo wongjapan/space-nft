@@ -71,7 +71,7 @@ contract F4HIssuer is AccessControl {
     idContract[_idContract] = true;
   }
 
-  function mintF4H(
+  function mintShip(
     uint256 _shipId,
     string memory _shipName,
     uint256 _shipType,
@@ -84,8 +84,8 @@ contract F4HIssuer is AccessControl {
     bytes32 ethSignedMessageHash = ECDSA.toEthSignedMessageHash(criteriaMessageHash);
     require(admin[ECDSA.recover(ethSignedMessageHash, signature)], "Mint: invalid seller signature");
 
-    require(_shipType >= 0 && _shipType < shipType.length, "F4H Type not found");
-    require(_shipTier >= 0 && _shipTier < shipTier.length, "F4H Tier not found");
+    require(_shipType >= 0 && _shipType < shipType.length, "Ship Type not found");
+    require(_shipTier >= 0 && _shipTier < shipTier.length, "Ship Tier not found");
     shipsAssets.safeMint(address(msg.sender), _shipId);
     shipsAssets.addShip(_shipId, _shipName, shipType[_shipType], _shipClass, shipTier[_shipTier]);
     emit mintship(msg.sender, _shipId, _shipName, shipType[_shipType], _shipClass, shipTier[_shipTier]);
