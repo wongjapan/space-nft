@@ -12,7 +12,7 @@ contract F4HIssuer is AccessControl {
     shipsAssets = IF4HAssets(_shipsAssets); // F4H Assets
   }
 
-  event mintship(address Owner, uint256 tokenId, string shipName, string shipType, string shipClass, string shipTier);
+  event MintShip(address Owner, uint256 tokenId, string shipName, string shipType, string shipClass, string shipTier);
   string[] public shipTier; // tier information
   string[] public shipType; // type information
 
