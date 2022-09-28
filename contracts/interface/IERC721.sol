@@ -38,33 +38,4 @@ interface IERC721 is IERC165 {
     uint256 tokenId,
     bytes calldata data
   ) external;
-
-  struct HeroesInfo {
-    uint256 heroesNumber;
-    string name;
-    string race;
-    string class;
-    string tier;
-    string tierBasic;
-  }
-
-  function getHeroesNumber(uint256 _tokenId) external view returns (HeroesInfo memory);
-
-  function safeMint(address _to, uint256 _tokenId) external;
-
-  function burn(address _from, uint256 _tokenId) external;
-
-  function addHeroesNumber(
-    uint256 _tokenId,
-    uint256 _heroesNumber,
-    string memory name,
-    string memory race,
-    string memory class,
-    string memory tier,
-    string memory tierBasic
-  ) external;
-
-  function editTier(uint256 tokenId, string memory _tier) external;
-
-  function deleteHeroesNumber(uint256 tokenId) external;
 }
