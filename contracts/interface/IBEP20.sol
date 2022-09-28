@@ -18,6 +18,8 @@ interface IBEP20 {
     uint256 amount
   ) external returns (bool);
 
+  function decimals() external view returns (uint8);
+
   function mint(address account, uint256 amount) external returns (bool);
 
   function burn(address account, uint256 amount) external returns (bool);

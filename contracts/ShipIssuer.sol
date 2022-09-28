@@ -9,13 +9,14 @@ import "./interface/IShip.sol";
 contract ShipIssuer is AccessControl {
   using SafeMath for uint256;
   using SafeBEP20 for IBEP20;
+
   IShip public shipNFT;
   IBEP20 public f4hToken;
+
   bytes32 public constant CREATOR_ADMIN_SERVER = keccak256("CREATOR_ADMIN_SERVER");
   string public stringNull = "";
   uint256 public feeShip = 50000000000000000000;
-  uint256 public feeShips = 500000000000000000000;
-  address public receiveFee = payable(0x9c39E1d30D2Fd9b13Ca37BB4117E4C6a58541c66);
+  address public receiveFee = payable(0x3631f25ea6f2368D3A927685acD2C5c43CE05049);
 
   constructor(
     address minter,
@@ -28,15 +29,40 @@ contract ShipIssuer is AccessControl {
     f4hToken = IBEP20(_f4hToken);
   }
 
-  event summonhero(address Owner, uint256 tokenId, string nameShip, string shipClass, string tier, string typeIssue);
-  event openpackage(address Owner, uint256 tokenId, string nameShip, string shipClass, string tier);
-  event RequestShip(uint256 tokenId, address Owner, uint256 numberShip, string tier, string typeIssue);
+  event RequestShip(uint256 tokenId, address owner, uint256 shipNumber);
+  event DeliverShip(
+    address owner,
+    uint256 tokenId,
+    uint256 shipNumber,
+    string shipName,
+    string shipClass,
+    string shipLevel,
+    uint256 shipSpeed,
+    uint256 shipWeight,
+    uint256 shipTurningAngle,
+    uint256 shipMissileSpeed,
+    string shipLaserType,
+    uint256 shipLaserSlot
+  );
 
+  /**
+   * default state of ship
+   */
   struct Ship {
     string shipName;
     string shipClass;
     string shipLevel;
+    uint256 shipSpeed;
+    uint256 shipWeight;
+    uint256 shipTurningAngle;
+    uint256 shipMissileSpeed;
+    string shipLaserType;
+    uint256 shipLaserSlot;
   }
+
+  /**
+   * level name
+   */
   struct LevelName {
     string levelName;
   }
@@ -71,26 +97,54 @@ contract ShipIssuer is AccessControl {
 
   function addShip(
     uint256[] memory id,
-    string[] memory shipName,
-    string[] memory shipClass,
-    string[] memory shipLevel
+    string[] memory _shipName,
+    string[] memory _shipClass,
+    string[] memory _shipLevel,
+    uint256[] memory _shipSpeed,
+    uint256[] memory _shipWeight,
+    uint256[] memory _shipTurningAngle,
+    uint256[] memory _shipMissileSpeed,
+    string[] memory _shipLaserType,
+    uint256[] memory _shipLaserSlot
   ) public {
     require(hasRole(DEFAULT_ADMIN_ROLE, address(msg.sender)), "Caller is not a owner");
-    for (uint256 i = 0; i < shipName.length; i++) {
-      ships[id[i]] = Ship(shipName[i], shipClass[i], shipLevel[i]);
+    for (uint256 i = 0; i < _shipName.length; i++) {
+      ships[id[i]] = Ship(
+        _shipName[i],
+        _shipClass[i],
+        _shipLevel[i],
+        _shipSpeed[i],
+        _shipWeight[i],
+        _shipTurningAngle[i],
+        _shipMissileSpeed[i],
+        _shipLaserType[i],
+        _shipLaserSlot[i]
+      );
     }
   }
 
   function editShip(
     uint256 _id,
-    string memory name,
-    string memory shipClass,
-    string memory shipLevel
+    string memory shipName,
+    string memory _shipClass,
+    string memory _shipLevel,
+    uint256 _shipSpeed,
+    uint256 _shipWeight,
+    uint256 _shipTurningAngle,
+    uint256 _shipMissileSpeed,
+    string memory _shipLaserType,
+    uint256 _shipLaserSlot
   ) public {
     require(hasRole(DEFAULT_ADMIN_ROLE, address(msg.sender)), "Caller is not a owner");
-    ships[_id].name = name;
-    ships[_id].shipClass = shipClass;
-    ships[_id].shipLevel = shipLevel;
+    ships[_id].shipName = shipName;
+    ships[_id].shipClass = _shipClass;
+    ships[_id].shipLevel = _shipLevel;
+    ships[_id].shipSpeed = _shipSpeed;
+    ships[_id].shipWeight = _shipWeight;
+    ships[_id].shipTurningAngle = _shipTurningAngle;
+    ships[_id].shipMissileSpeed = _shipMissileSpeed;
+    ships[_id].shipLaserType = _shipLaserType;
+    ships[_id].shipLaserSlot = _shipLaserSlot;
   }
 
   function changeFee(uint256 _fee) public {
@@ -99,111 +153,48 @@ contract ShipIssuer is AccessControl {
     feeShip = _fee;
   }
 
-  function changeFees(uint256 _fee) public {
-    require(hasRole(DEFAULT_ADMIN_ROLE, address(msg.sender)), "Caller is not a owner");
-    require(_fee > 0, "need fee > 0");
-    feeShips = _fee;
-  }
-
-  function requestCard(
-    uint256 _tokenId,
-    uint256 _numberHero,
-    string memory _level
-  ) public {
-    f4hToken.safeTransferFrom(address(msg.sender), address(receiveFee), feeCard);
-    require(queryLevelName(_level) == 1, "Tier not found");
-    require(
-      queryNumberLevel(_level) == 0 || queryNumberLevel(_level) == 1 || queryNumberLevel(_level) == 3,
-      "tier is not allowed to issue"
-    );
-    require(keccak256(bytes(ships[_numberHero].name)) != keccak256(bytes(stringNull)), "Ship not found");
-    emit RequestShip(_tokenId, msg.sender, _numberHero, _level, "Card");
-  }
-
-  function requestSummon(
-    uint256 _tokenId,
-    uint256 _numberHero,
-    string memory _level
-  ) public {
+  function requestShip(uint256 _tokenId, uint256 _shipNumber) public {
     f4hToken.safeTransferFrom(address(msg.sender), address(receiveFee), feeShip);
-    require(queryLevelName(_level) == 1, "Tier not found");
-    require(
-      queryNumberLevel(_level) == 0 || queryNumberLevel(_level) == 1 || queryNumberLevel(_level) == 3,
-      "tier is not allowed to issue"
-    );
-    require(keccak256(bytes(ships[_numberHero].name)) != keccak256(bytes(stringNull)), "Ship not found");
-    emit RequestShip(_tokenId, msg.sender, _numberHero, _level, "Summon");
+    emit RequestShip(_tokenId, msg.sender, _shipNumber);
   }
 
-  function openPackage(
+  function deliverShip(
     address[] memory _owner,
     uint256[] memory _tokenId,
-    uint256[] memory _numberHero,
-    string[] memory _level
+    uint256[] memory _shipNumber
   ) public {
     require(hasRole(CREATOR_ADMIN_SERVER, address(msg.sender)), "Caller is not a admin");
-    require(
-      _owner.length == _numberHero.length && _tokenId.length == _numberHero.length && _tokenId.length == _level.length,
-      "Input not true"
-    );
+    require(_owner.length == _shipNumber.length && _tokenId.length == _shipNumber.length, "Input not true");
     for (uint256 i = 0; i < _tokenId.length; i++) {
-      require(queryLevelName(_level[i]) == 1, "Tier not found");
-      require(queryNumberLevel(_level[i]) == 1, "Tier is not allowed to issue");
-      require(heroOpenPack[_numberHero[i]], "Number Hero is not allowed to issue");
-      require(keccak256(bytes(ships[_numberHero[i]].name)) != keccak256(bytes(stringNull)), "Ship not found");
+      require(keccak256(bytes(ships[_shipNumber[i]].shipName)) != keccak256(bytes(stringNull)), "Ship not found");
+      string memory level = levelName[0].levelName;
       shipNFT.safeMint(address(_owner[i]), _tokenId[i]);
-      shipNFT.addShipNumber(
+      shipNFT.addShip(
         _tokenId[i],
-        _numberHero[i],
-        ships[_numberHero[i]].name,
-        ships[_numberHero[i]].shipClass,
-        ships[_numberHero[i]].shipLevel,
-        _level[i],
-        _level[i]
+        _shipNumber[i],
+        ships[_shipNumber[i]].shipName,
+        ships[_shipNumber[i]].shipClass,
+        level,
+        ships[_shipNumber[i]].shipSpeed,
+        ships[_shipNumber[i]].shipWeight,
+        ships[_shipNumber[i]].shipTurningAngle,
+        ships[_shipNumber[i]].shipMissileSpeed,
+        ships[_shipNumber[i]].shipLaserType,
+        ships[_shipNumber[i]].shipLaserSlot
       );
-      emit openpackage(_owner[i], _tokenId[i], ships[_numberHero[i]].name, ships[_numberHero[i]].shipClass, _level[i]);
-    }
-  }
-
-  function summon(
-    address[] memory _owner,
-    uint256[] memory _tokenId,
-    uint256[] memory _numberHero,
-    string[] memory _level,
-    string[] memory _type
-  ) public {
-    require(hasRole(CREATOR_ADMIN_SERVER, address(msg.sender)), "Caller is not a admin");
-    require(
-      _owner.length == _numberHero.length &&
-        _tokenId.length == _numberHero.length &&
-        _tokenId.length == _level.length &&
-        _tokenId.length == _type.length,
-      "Input not true"
-    );
-    for (uint256 i = 0; i < _tokenId.length; i++) {
-      require(queryLevelName(_level[i]) == 1, "Tier not found");
-      require(
-        queryNumberLevel(_level[i]) == 0 || queryNumberLevel(_level[i]) == 1 || queryNumberLevel(_level[i]) == 3,
-        "tier is not allowed to issue"
-      );
-      require(keccak256(bytes(ships[_numberHero[i]].name)) != keccak256(bytes(stringNull)), "Ship not found");
-      shipNFT.safeMint(address(_owner[i]), _tokenId[i]);
-      shipNFT.addShipNumber(
-        _tokenId[i],
-        _numberHero[i],
-        ships[_numberHero[i]].name,
-        ships[_numberHero[i]].shipClass,
-        ships[_numberHero[i]].shipLevel,
-        _level[i],
-        _level[i]
-      );
-      emit summonhero(
+      emit DeliverShip(
         _owner[i],
         _tokenId[i],
-        ships[_numberHero[i]].name,
-        ships[_numberHero[i]].shipClass,
-        _level[i],
-        _type[i]
+        _shipNumber[i],
+        ships[_shipNumber[i]].shipName,
+        ships[_shipNumber[i]].shipClass,
+        level,
+        ships[_shipNumber[i]].shipSpeed,
+        ships[_shipNumber[i]].shipWeight,
+        ships[_shipNumber[i]].shipTurningAngle,
+        ships[_shipNumber[i]].shipMissileSpeed,
+        ships[_shipNumber[i]].shipLaserType,
+        ships[_shipNumber[i]].shipLaserSlot
       );
     }
   }
