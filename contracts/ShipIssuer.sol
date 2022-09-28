@@ -169,32 +169,33 @@ contract ShipIssuer is AccessControl {
       require(keccak256(bytes(ships[_shipNumber[i]].shipName)) != keccak256(bytes(stringNull)), "Ship not found");
       string memory level = levelName[0].levelName;
       shipNFT.safeMint(address(_owner[i]), _tokenId[i]);
+      uint256 shipNumberTemp = _shipNumber[i];
       shipNFT.addShip(
         _tokenId[i],
-        _shipNumber[i],
-        ships[_shipNumber[i]].shipName,
-        ships[_shipNumber[i]].shipClass,
+        shipNumberTemp,
+        ships[shipNumberTemp].shipName,
+        ships[shipNumberTemp].shipClass,
         level,
-        ships[_shipNumber[i]].shipSpeed,
-        ships[_shipNumber[i]].shipWeight,
-        ships[_shipNumber[i]].shipTurningAngle,
-        ships[_shipNumber[i]].shipMissileSpeed,
-        ships[_shipNumber[i]].shipLaserType,
-        ships[_shipNumber[i]].shipLaserSlot
+        ships[shipNumberTemp].shipSpeed,
+        ships[shipNumberTemp].shipWeight,
+        ships[shipNumberTemp].shipTurningAngle,
+        ships[shipNumberTemp].shipMissileSpeed,
+        ships[shipNumberTemp].shipLaserType,
+        ships[shipNumberTemp].shipLaserSlot
       );
       emit DeliverShip(
         _owner[i],
         _tokenId[i],
-        _shipNumber[i],
-        ships[_shipNumber[i]].shipName,
-        ships[_shipNumber[i]].shipClass,
+        shipNumberTemp,
+        ships[shipNumberTemp].shipName,
+        ships[shipNumberTemp].shipClass,
         level,
-        ships[_shipNumber[i]].shipSpeed,
-        ships[_shipNumber[i]].shipWeight,
-        ships[_shipNumber[i]].shipTurningAngle,
-        ships[_shipNumber[i]].shipMissileSpeed,
-        ships[_shipNumber[i]].shipLaserType,
-        ships[_shipNumber[i]].shipLaserSlot
+        ships[shipNumberTemp].shipSpeed,
+        ships[shipNumberTemp].shipWeight,
+        ships[shipNumberTemp].shipTurningAngle,
+        ships[shipNumberTemp].shipMissileSpeed,
+        ships[shipNumberTemp].shipLaserType,
+        ships[shipNumberTemp].shipLaserSlot
       );
     }
   }
