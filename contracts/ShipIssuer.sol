@@ -58,6 +58,7 @@ contract ShipIssuer is AccessControl {
     uint256 shipMissileSpeed;
     string shipLaserType;
     uint256 shipLaserSlot;
+    uint256 shipPrice;
   }
 
   /**
@@ -105,7 +106,8 @@ contract ShipIssuer is AccessControl {
     uint256[] memory _shipTurningAngle,
     uint256[] memory _shipMissileSpeed,
     string[] memory _shipLaserType,
-    uint256[] memory _shipLaserSlot
+    uint256[] memory _shipLaserSlot,
+    uint256[] memory _shipPrice
   ) public {
     require(hasRole(DEFAULT_ADMIN_ROLE, address(msg.sender)), "Caller is not a owner");
     for (uint256 i = 0; i < _shipName.length; i++) {
@@ -118,7 +120,8 @@ contract ShipIssuer is AccessControl {
         _shipTurningAngle[i],
         _shipMissileSpeed[i],
         _shipLaserType[i],
-        _shipLaserSlot[i]
+        _shipLaserSlot[i],
+        _shipPrice[i]
       );
     }
   }
@@ -133,7 +136,8 @@ contract ShipIssuer is AccessControl {
     uint256 _shipTurningAngle,
     uint256 _shipMissileSpeed,
     string memory _shipLaserType,
-    uint256 _shipLaserSlot
+    uint256 _shipLaserSlot,
+    uint256 _shipPrice
   ) public {
     require(hasRole(DEFAULT_ADMIN_ROLE, address(msg.sender)), "Caller is not a owner");
     ships[_id].shipName = shipName;
@@ -145,6 +149,7 @@ contract ShipIssuer is AccessControl {
     ships[_id].shipMissileSpeed = _shipMissileSpeed;
     ships[_id].shipLaserType = _shipLaserType;
     ships[_id].shipLaserSlot = _shipLaserSlot;
+    ships[_id].shipPrice = _shipPrice;
   }
 
   function changeFee(uint256 _fee) public {
